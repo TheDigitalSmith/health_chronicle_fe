@@ -13,6 +13,8 @@ export default class UserProfile extends Component {
     bloodType: "",
     allergies: [],
     diseases: [],
+    vaccines: [],
+    history: [],
     email: "",
     emergencyContacts: [],
     firstName: "",
@@ -24,20 +26,9 @@ export default class UserProfile extends Component {
     weight: 0,
     organDonour: false,
   };
-  handleSubmit = async (e) => {
-    e.preventDefault();
-    const token =
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWY2NWNlMjQ5NWZiZjJkZTRkOTY1ODEiLCJpYXQiOjE1OTM1MTAzODAsImV4cCI6MTU5Mzc2OTU4MH0.jejI1K23Z3ZNJMnF1T8Xxh00645157n46yZ25klx28A";
-    const submitURL = await fetch("http://localhost:9121/api/users/me", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-    });
-    const response = await submitURL.json();
-    console.log(response);
-    this.setState({ ...response });
+
+  handleChange = (user) => {
+    this.setState({ ...user });
   };
   render() {
     const {
@@ -50,6 +41,11 @@ export default class UserProfile extends Component {
       allergies,
       sex,
       organDonour,
+      diseases,
+      medicines,
+      vaccines,
+      history,
+      emergencyContacts,
     } = this.state;
 
     return (
@@ -64,19 +60,20 @@ export default class UserProfile extends Component {
           sex={sex}
           allergies={allergies}
           organDonour={organDonour}
+          emergencyContacts={emergencyContacts}
+          handleChange={this.handleChange}
         ></UserInfo>
-        <DiseaseList></DiseaseList>
-        <MedicineList></MedicineList>
-        <VaccineList></VaccineList>
-        <HistoryList></HistoryList>
+        <DiseaseList diseases={diseases}></DiseaseList>
+        <MedicineList medicines={medicines}></MedicineList>
+        <VaccineList vaccines={vaccines}></VaccineList>
+        <HistoryList history={history}></HistoryList>
       </Container>
     );
   }
   componentDidMount = async () => {
     try {
-      const token =
-        "Bearer " +
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWY2NWNlMjQ5NWZiZjJkZTRkOTY1ODEiLCJpYXQiOjE1OTM1MTEwNTUsImV4cCI6MTU5Mzc3MDI1NX0.NM1md8imvnBxN9SuInKH8E1_IpRY7j6MWT5HzKWDeJA";
+      const accessToken = localStorage.getItem("x_access_token");
+      const token = "Bearer " + accessToken;
       const submitURL = await fetch("http://localhost:9121/api/users/me", {
         method: "GET",
         headers: {
@@ -85,7 +82,6 @@ export default class UserProfile extends Component {
         },
       });
       const response = await submitURL.json();
-      console.log(response);
       this.setState({ ...response });
     } catch (err) {
       console.log(err);

@@ -23,7 +23,9 @@ export default class NavigationBar extends Component {
               My Profile
             </Link>
           </Nav>
-          <Button variant="outline-info">Sign In</Button>
+          <Button variant="outline-info">
+            <Link to="/signin">Sign In</Link>
+          </Button>
           <Button variant="outline-info">Sign Up</Button>
         </Navbar.Collapse>
       </Navbar>

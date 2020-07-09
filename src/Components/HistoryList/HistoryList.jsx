@@ -16,25 +16,36 @@ export default class HistoryList extends Component {
     ],
   };
   render() {
+    const { history } = this.props;
     return (
       <Container>
         <h2>History</h2>
         <Row>
-          {this.state.history.map((h) => (
-            <Col lg={3}>
-              <Card pt={3} className="mt-2 mb-2">
+          {history.length !== 0 ? (
+            history.map((h) => (
+              <Col lg={3}>
+                <Card pt={3} className="mt-2 mb-2">
+                  <Card.Body>
+                    <Card.Title>{h.case}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">
+                      {h.date}
+                    </Card.Subtitle>
+                    <Card.Text>{h.description}</Card.Text>
+                    <Card.Link href="#">Card Link</Card.Link>
+                    <Card.Link href="#">Another Link</Card.Link>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))
+          ) : (
+            <Col lg={12}>
+              <Card className="mt-2 mb-2">
                 <Card.Body>
-                  <Card.Title>{h.case}</Card.Title>
-                  <Card.Subtitle className="mb-2 text-muted">
-                    {h.date}
-                  </Card.Subtitle>
-                  <Card.Text>{h.description}</Card.Text>
-                  <Card.Link href="#">Card Link</Card.Link>
-                  <Card.Link href="#">Another Link</Card.Link>
+                  <Card.Title>No records of history</Card.Title>
                 </Card.Body>
               </Card>
             </Col>
-          ))}
+          )}
         </Row>
       </Container>
     );

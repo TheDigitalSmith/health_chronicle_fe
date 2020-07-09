@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 
 import Form from "react-bootstrap/Form";
+import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import Accordion from "react-bootstrap/Accordion";
 import Container from "react-bootstrap/Container";
 import Modal from "react-bootstrap/Modal";
 
@@ -19,17 +21,40 @@ export default class UserInfo extends Component {
     this.setState({ showModal: false });
   };
 
+  handleEditUserInfo = async () => {
+    try {
+      const accessToken = localStorage.getItem("x_access_token");
+      const token = "Bearer " + accessToken;
+      const submitURL = await fetch("http://localhost:9121/api/users/me", {
+        method: "PUT",
+        body: JSON.stringify({ ...this.state }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      });
+
+      const response = await submitURL.json();
+      console.log("response", response);
+      this.setState({ ...response });
+      console.log(this.state);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   render() {
     const {
       firstName,
       lastName,
       bloodType,
-      email,
       height,
       weight,
       allergies,
       sex,
       organDonour,
+      emergencyContacts,
+      handleChange,
     } = this.props;
 
     const { showModal } = this.state;
@@ -72,7 +97,14 @@ export default class UserInfo extends Component {
                   Last Name
                 </Form.Label>
                 <Col sm="6">
-                  <Form.Label column>{lastName}</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Normal text"
+                    value={this.state.lastName}
+                    onChange={(e) =>
+                      this.setState({ lastName: e.target.value })
+                    }
+                  />
                 </Col>
               </Form.Group>
 
@@ -81,7 +113,12 @@ export default class UserInfo extends Component {
                   Sex
                 </Form.Label>
                 <Col sm="6">
-                  <Form.Label column>{sex}</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Normal text"
+                    value={this.state.sex}
+                    onChange={(e) => this.setState({ sex: e.target.value })}
+                  />
                 </Col>
               </Form.Group>
 
@@ -90,7 +127,12 @@ export default class UserInfo extends Component {
                   Height
                 </Form.Label>
                 <Col sm="6">
-                  <Form.Label column>{height}</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Normal text"
+                    value={this.state.height}
+                    onChange={(e) => this.setState({ height: e.target.value })}
+                  />
                 </Col>
               </Form.Group>
 
@@ -99,7 +141,12 @@ export default class UserInfo extends Component {
                   Weight
                 </Form.Label>
                 <Col sm="6">
-                  <Form.Label column>{weight}</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Normal text"
+                    value={this.state.weight}
+                    onChange={(e) => this.setState({ weight: e.target.value })}
+                  />
                 </Col>
               </Form.Group>
 
@@ -108,7 +155,14 @@ export default class UserInfo extends Component {
                   Blood type
                 </Form.Label>
                 <Col sm="6">
-                  <Form.Label column>{bloodType}</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Normal text"
+                    value={this.state.bloodType}
+                    onChange={(e) =>
+                      this.setState({ bloodType: e.target.value })
+                    }
+                  />
                 </Col>
               </Form.Group>
 
@@ -117,7 +171,24 @@ export default class UserInfo extends Component {
                   Organ Donour
                 </Form.Label>
                 <Col sm="6">
-                  <Form.Label column>{String(organDonour)}</Form.Label>
+                  <Form.Control
+                    as="select"
+                    onClick={(e) =>
+                      this.setState({ organDonour: e.target.value })
+                    }
+                  >
+                    <option value={true}>True</option>
+                    <option value={false}>False</option>
+                  </Form.Control>
+                  {/* <Form.Control
+                    type="text"
+                    placeholder="Normal text"
+                    value={this.state.organDonour}
+                    onChange={(e) =>
+                      this.setState({ organDonour: e.target.value })
+                    }
+                  /> */}
+                  {/* <Form.Label column>{String(organDonour)}</Form.Label> */}
                 </Col>
               </Form.Group>
             </Form>
@@ -125,12 +196,22 @@ export default class UserInfo extends Component {
               <Button variant="secondary" onClick={this.closeModal}>
                 Close
               </Button>
-              <Button variant="primary">Save Changes</Button>
+              <Button variant="primary" onClick={this.handleEditUserInfo}>
+                Save Changes
+              </Button>
             </Modal.Footer>
           </Modal>
         )}
         <Row>
-          <Col lg={7}>
+          <Col lg={3}>
+            <Card>
+              <Card.Img
+                variant="top"
+                src="https://www.bsn.eu/wp-content/uploads/2016/12/user-icon-image-placeholder-300-grey.jpg"
+              />
+            </Card>
+          </Col>
+          <Col lg={5}>
             <Form>
               <Form.Group as={Row} controlId="formPlaintextEmail">
                 <Form.Label column sm="2">
@@ -208,11 +289,34 @@ export default class UserInfo extends Component {
           <Col>
             <Form>
               <Form.Group as={Row} controlId="formPlaintextEmail">
-                <Form.Label column>Emergency Contact</Form.Label>
-                <Col>
-                  <Form.Label column>Tash</Form.Label>
-                </Col>
+                <Form.Label column>Emergency Contacts</Form.Label>
+                <Button variant="secondary" onClick={this.closeModal}>
+                  +
+                </Button>
               </Form.Group>
+              <Row>
+                <Accordion>
+                  {emergencyContacts.map((c) => (
+                    <Card>
+                      <Card.Header>
+                        <Accordion.Toggle
+                          as={Button}
+                          variant="link"
+                          eventKey={c._id}
+                        >
+                          {c.firstName + " " + c.lastName}
+                        </Accordion.Toggle>
+                      </Card.Header>
+                      <Accordion.Collapse eventKey={c._id}>
+                        <Card.Body>
+                          <footer>email: {c.email}</footer>
+                          <footer>mobile: {c.mobile}</footer>
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  ))}
+                </Accordion>
+              </Row>
             </Form>
           </Col>
         </Row>
