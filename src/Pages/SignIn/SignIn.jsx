@@ -23,10 +23,10 @@ export default class SignIn extends Component {
       },
     });
     const response = await submitURL.json();
-    console.log(response);
     this.setState({ ...response });
     this.setState({ username: "", password: "" });
     localStorage.setItem("x_access_token", response.access_token);
+    this.props.history.push("/me");
   };
 
   render() {

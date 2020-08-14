@@ -22,23 +22,21 @@ export default class Homepage extends Component {
   render() {
     return (
       <>
-        <Jumbotron1>
+        <Jumbotron1 style={{ height: "400px" }}>
           <h1>{this.state.jumbotron[0].title}</h1>
           <p>{this.state.jumbotron[0].content}</p>
           <p>
             <Button variant="primary">Learn more</Button>
           </p>
         </Jumbotron1>
-        {/* <Jumbotron></Jumbotron> */}
         <Container fluid>
           <Row className="mb-5">
-            <Col lg={8}>
+            <Col lg={6} md={8} sm={12}>
               <img
                 src="https://static.teamviewer.com/resources/2020/03/girl-teaching-senior-mother-use-laptop-1618x1080.jpg"
                 alt="Professional Medical Practioner"
                 className="mainJumbotron"
               ></img>
-              {/* <Jumbotron></Jumbotron> */}
             </Col>
             <Col>
               <h1>Hello, world!</h1>
@@ -63,6 +61,22 @@ export default class Homepage extends Component {
                 className="mainJumbotron"
               ></img>
               {/* <Jumbotron></Jumbotron> */}
+            </Col>
+          </Row>
+          <Row className="mb-5">
+            <Col lg={8}>
+              <img
+                src="https://images.unsplash.com/photo-1530521954074-e64f6810b32d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
+                alt="Professional Medical Practioner"
+                className="mainJumbotron"
+              ></img>
+            </Col>
+            <Col>
+              <h1>Hello, world!</h1>
+              <p>
+                This is a simple hero unit, a simple jumbotron-style component
+                for calling extra attention to featured content or information.
+              </p>
             </Col>
           </Row>
         </Container>

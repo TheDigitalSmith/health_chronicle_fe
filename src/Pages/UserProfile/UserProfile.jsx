@@ -30,6 +30,22 @@ export default class UserProfile extends Component {
   handleChange = (user) => {
     this.setState({ ...user });
   };
+
+  handleDiseaseChange = (disease) => {
+    this.setState({ diseases: disease });
+  };
+
+  handleMedicineChange = (medicine) => {
+    this.setState({ medicines: medicine });
+  };
+
+  handleVaccineChange = (vaccine) => {
+    this.setState({ vaccines: vaccine });
+  };
+
+  handleHistoryChange = (history) => {
+    this.setState({ history: history });
+  };
   render() {
     const {
       firstName,
@@ -47,7 +63,6 @@ export default class UserProfile extends Component {
       history,
       emergencyContacts,
     } = this.state;
-
     return (
       <Container>
         <UserInfo
@@ -63,10 +78,22 @@ export default class UserProfile extends Component {
           emergencyContacts={emergencyContacts}
           handleChange={this.handleChange}
         ></UserInfo>
-        <DiseaseList diseases={diseases}></DiseaseList>
-        <MedicineList medicines={medicines}></MedicineList>
-        <VaccineList vaccines={vaccines}></VaccineList>
-        <HistoryList history={history}></HistoryList>
+        <DiseaseList
+          diseases={diseases}
+          handleDiseaseChange={this.handleDiseaseChange}
+        ></DiseaseList>
+        <MedicineList
+          medicines={medicines}
+          handleMedicineChange={this.handleMedicineChange}
+        ></MedicineList>
+        <VaccineList
+          vaccines={vaccines}
+          handleVaccineChange={this.handleVaccineChange}
+        ></VaccineList>
+        <HistoryList
+          history={history}
+          handleHistoryChange={this.handleHistoryChange}
+        ></HistoryList>
       </Container>
     );
   }

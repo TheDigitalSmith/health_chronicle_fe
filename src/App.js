@@ -16,8 +16,6 @@ function App() {
         <Route path="/signin" component={SignIn}></Route>
         <Route path="/" component={Homepage}></Route>
       </Switch>
-      {/* <UserProfile></UserProfile> */}
-      {/* <Homepage></Homepage> */}
       <Footer></Footer>
     </>
   );

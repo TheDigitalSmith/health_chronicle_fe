@@ -9,7 +9,7 @@ export default class NavigationBar extends Component {
   render() {
     return (
       <Navbar collapseOnSelect bg="dark" variant="dark" expand="lg">
-        <Navbar.Brand href="#home">Health Chronicle</Navbar.Brand>
+        <Navbar.Brand href="/">Health Chronicle</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
@@ -23,10 +23,12 @@ export default class NavigationBar extends Component {
               My Profile
             </Link>
           </Nav>
-          <Button variant="outline-info">
-            <Link to="/signin">Sign In</Link>
-          </Button>
-          <Button variant="outline-info">Sign Up</Button>
+          <Nav className="ml-auto">
+            <Link to="/signin" className="nav-link">
+              Sign In
+            </Link>
+            <Link className="nav-link">Sign Up</Link>
+          </Nav>
         </Navbar.Collapse>
       </Navbar>
     );

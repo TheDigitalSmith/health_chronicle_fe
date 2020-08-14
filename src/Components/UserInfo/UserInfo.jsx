@@ -7,42 +7,89 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Accordion from "react-bootstrap/Accordion";
 import Container from "react-bootstrap/Container";
-import Modal from "react-bootstrap/Modal";
+
+import UserModal from "../Modals/UserModal";
+import EmergencyContactModal from "../Modals/EmergencyContactModal";
 
 export default class UserInfo extends Component {
   state = {
     showModal: false,
+    showEmergencyModal: false,
   };
   openModal = () => {
     console.log("copying props");
-    this.setState({ ...this.props, showModal: true });
+    this.setState({ showModal: true });
   };
   closeModal = async () => {
     this.setState({ showModal: false });
   };
 
-  handleEditUserInfo = async () => {
+  controlEmergencyModal = () => {
+    this.setState({
+      showEmergencyModal: !this.state.showEmergencyModal,
+    });
+  };
+
+  handleEditUserInfo = async (updatedUser) => {
     try {
       const accessToken = localStorage.getItem("x_access_token");
       const token = "Bearer " + accessToken;
       const submitURL = await fetch("http://localhost:9121/api/users/me", {
         method: "PUT",
-        body: JSON.stringify({ ...this.state }),
+        body: JSON.stringify({ ...updatedUser }),
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
         },
       });
-
-      const response = await submitURL.json();
-      console.log("response", response);
-      this.setState({ ...response });
-      console.log(this.state);
+      if (submitURL.ok) {
+        const response = await submitURL.json();
+        console.log("response", response);
+        this.setState({ showModal: false });
+        this.props.handleChange(response);
+        console.log(this.state);
+        return;
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
+  handleEmergencyContact = async (contact) => {
+    // const
+    try {
+      const emergencyContacts = [
+        ...this.props.emergencyContacts,
+        {
+          firstName: contact.emergencyFirstName,
+          lastName: contact.emergencyLastName,
+          email: contact.emergencyEmail,
+          mobile: contact.emergencyMobileNo,
+          country: contact.emergencyCountry,
+        },
+      ];
+      const accessToken = localStorage.getItem("x_access_token");
+      const token = "Bearer " + accessToken;
+      const submitURL = await fetch("http://localhost:9121/api/users/me", {
+        method: "PUT",
+        body: JSON.stringify({ emergencyContacts: emergencyContacts }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      });
+      if (submitURL.ok) {
+        const response = await submitURL.json();
+        console.log("response", response);
+        this.setState({ showEmergencyModal: false });
+        this.props.handleChange(response);
+        console.log(this.state);
+        return;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   render() {
     const {
       firstName,
@@ -54,153 +101,32 @@ export default class UserInfo extends Component {
       sex,
       organDonour,
       emergencyContacts,
-      handleChange,
     } = this.props;
 
-    const { showModal } = this.state;
+    const { showModal, showEmergencyModal } = this.state;
     return (
       <Container>
         <h2>User Profile</h2>
-        <Button variant="primary" onClick={this.openModal}>
-          Edit User
-        </Button>
-
         {showModal && (
-          <Modal
-            show={this.openModal}
-            onHide={this.closeModal}
-            backdrop="static"
-            keyboards={false}
-          >
-            <Modal.Header closeButton>
-              <Modal.Title>Edit user information</Modal.Title>
-            </Modal.Header>
-            <Form>
-              <Form.Group as={Row} controlId="formPlaintextEmail">
-                <Form.Label column sm="6">
-                  First Name
-                </Form.Label>
-                <Col sm="6">
-                  <Form.Control
-                    type="text"
-                    placeholder="Normal text"
-                    value={this.state.firstName}
-                    onChange={(e) =>
-                      this.setState({ firstName: e.target.value })
-                    }
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row} controlId="formPlaintextEmail">
-                <Form.Label column sm="6">
-                  Last Name
-                </Form.Label>
-                <Col sm="6">
-                  <Form.Control
-                    type="text"
-                    placeholder="Normal text"
-                    value={this.state.lastName}
-                    onChange={(e) =>
-                      this.setState({ lastName: e.target.value })
-                    }
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row} controlId="formPlaintextEmail">
-                <Form.Label column sm="6">
-                  Sex
-                </Form.Label>
-                <Col sm="6">
-                  <Form.Control
-                    type="text"
-                    placeholder="Normal text"
-                    value={this.state.sex}
-                    onChange={(e) => this.setState({ sex: e.target.value })}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row} controlId="formPlaintextEmail">
-                <Form.Label column sm="6">
-                  Height
-                </Form.Label>
-                <Col sm="6">
-                  <Form.Control
-                    type="text"
-                    placeholder="Normal text"
-                    value={this.state.height}
-                    onChange={(e) => this.setState({ height: e.target.value })}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row} controlId="formPlaintextEmail">
-                <Form.Label column sm="6">
-                  Weight
-                </Form.Label>
-                <Col sm="6">
-                  <Form.Control
-                    type="text"
-                    placeholder="Normal text"
-                    value={this.state.weight}
-                    onChange={(e) => this.setState({ weight: e.target.value })}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row} controlId="formPlaintextEmail">
-                <Form.Label column sm="6">
-                  Blood type
-                </Form.Label>
-                <Col sm="6">
-                  <Form.Control
-                    type="text"
-                    placeholder="Normal text"
-                    value={this.state.bloodType}
-                    onChange={(e) =>
-                      this.setState({ bloodType: e.target.value })
-                    }
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row} controlId="formPlaintextEmail">
-                <Form.Label column sm="6">
-                  Organ Donour
-                </Form.Label>
-                <Col sm="6">
-                  <Form.Control
-                    as="select"
-                    onClick={(e) =>
-                      this.setState({ organDonour: e.target.value })
-                    }
-                  >
-                    <option value={true}>True</option>
-                    <option value={false}>False</option>
-                  </Form.Control>
-                  {/* <Form.Control
-                    type="text"
-                    placeholder="Normal text"
-                    value={this.state.organDonour}
-                    onChange={(e) =>
-                      this.setState({ organDonour: e.target.value })
-                    }
-                  /> */}
-                  {/* <Form.Label column>{String(organDonour)}</Form.Label> */}
-                </Col>
-              </Form.Group>
-            </Form>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={this.closeModal}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={this.handleEditUserInfo}>
-                Save Changes
-              </Button>
-            </Modal.Footer>
-          </Modal>
+          <UserModal
+            openModal={this.openModal}
+            closeModal={this.closeModal}
+            firstName={firstName}
+            lastName={lastName}
+            bloodType={bloodType}
+            height={height}
+            weight={weight}
+            allergies={allergies}
+            sex={sex}
+            organDonour={organDonour}
+            handleEditUserInfo={this.handleEditUserInfo}
+          />
+        )}
+        {showEmergencyModal && (
+          <EmergencyContactModal
+            controlEmergencyModal={this.controlEmergencyModal}
+            handleEmergencyContact={this.handleEmergencyContact}
+          />
         )}
         <Row>
           <Col lg={3}>
@@ -209,6 +135,9 @@ export default class UserInfo extends Component {
                 variant="top"
                 src="https://www.bsn.eu/wp-content/uploads/2016/12/user-icon-image-placeholder-300-grey.jpg"
               />
+              <Button variant="primary" onClick={this.openModal}>
+                Edit User
+              </Button>
             </Card>
           </Col>
           <Col lg={5}>
@@ -290,7 +219,10 @@ export default class UserInfo extends Component {
             <Form>
               <Form.Group as={Row} controlId="formPlaintextEmail">
                 <Form.Label column>Emergency Contacts</Form.Label>
-                <Button variant="secondary" onClick={this.closeModal}>
+                <Button
+                  variant="secondary"
+                  onClick={this.controlEmergencyModal}
+                >
                   +
                 </Button>
               </Form.Group>
